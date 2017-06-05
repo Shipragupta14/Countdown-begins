@@ -38,6 +38,8 @@ if (localStorage["time"]) {
 
 var tabActive;
 
+
+
 chrome.tabs.onActivated.addListener(function(info) {	
 	console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 	//console.log(tabActive);
@@ -80,7 +82,7 @@ chrome.tabs.onActivated.addListener(function(info) {
 
 
 	    console.log(time);
-	    console.log("*******************");
+	  //  console.log("*******************");
 
 	    // Put the object into storage
 		localStorage.setItem('time', JSON.stringify(time));
@@ -133,9 +135,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 		console.log('retrievedObject: ', JSON.parse(retrievedObject));
    	}
-   	console.log("##################");
+  // 	console.log("##################");
 
    });
+
 
 chrome.tabs.onRemoved.addListener(function (tabId, removeInfo){
 	chrome.tabs.query({currentWindow: true}, function(tabs){
@@ -153,9 +156,88 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo){
 
     	}
 	});
-
-
-
 });
 
 
+chrome.windows.onFocusChanged.addListener(function (windowId){
+	console.log(windowId);
+	chrome.windows.getCurrent(function(browser){
+
+      console.log(browser.focused)
+      if(browser.focused){
+      	console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+      	chrome.tabs.query({currentWindow: true, active: true}, function(tab){
+      		if (tabActive) {
+			var d = new Date();
+			time[tabActive].total_time  = parseInt(time[tabActive].total_time) ;
+			//time[tabActive].start_time = d.getTime(); 
+		}
+        console.log(tab[0].url);
+        var d = new Date();
+  		var start_time = d.getTime();
+        url = tab[0].url;
+        if(url.indexOf("/",9)!= -1){
+    	url = url.substring(0,url.indexOf("/",9))
+
+    }
+ 
+	    tabActive = url;
+
+	    // adding new url in time json of the tab we jumped
+	    if(time.hasOwnProperty(url)){
+	    	time[url].start_time = start_time;
+	    }else{
+    		time[url] = {
+    				"start_time"  : start_time,
+    				"total_time": 0
+    			}
+	    }
+	    console.log(time);
+	  //  console.log("*******************");
+
+	    // Put the object into storage
+		localStorage.setItem('time', JSON.stringify(time));
+		// Retrieve the object from storage
+		var retrievedObject = localStorage.getItem('time');
+
+		console.log('retrievedObject: ', JSON.parse(retrievedObject));
+	
+
+    }); 
+    }else{
+    	console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    	if (tabActive) {
+				var d = new Date();
+				time[tabActive].total_time = parseInt(time[tabActive].total_time) + parseInt(d.getTime()) - parseInt(time[tabActive].start_time);
+			
+			}
+			
+			localStorage.setItem('time',JSON.stringify(time));
+			var retrievedObject =  localStorage.getItem('time');
+			console.log('retrievedObject:', JSON.parse(retrievedObject));
+
+    }
+
+    })
+});
+ 
+ /*
+chrome.app.window.onClosed.addListener(function(windowId){  
+		chrome.tabs.query({currentWindow: true}, function(tabs){
+
+    	console.log(tabs.length);
+    	if(tabs.length == 0) {
+    		if (tabActive) {
+				var d = new Date();
+				time[tabActive].total_time  = parseInt(time[tabActive].total_time) + parseInt(d.getTime()) - parseInt(time[tabActive].start_time);
+			
+			}
+			
+			localStorage.setItem('time',JSON.stringify(time));
+			var retrievedObject =  localStorage.getItem('time');
+			console.log('retrievedObject:', JSON.parse(retrievedObject));
+    	}
+});
+});
+
+*/
