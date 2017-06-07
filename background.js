@@ -155,7 +155,7 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo){
 	});
 });
 
-
+/*
 chrome.windows.onFocusChanged.addListener(function (windowId){
 
 	console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
@@ -236,3 +236,69 @@ chrome.app.window.onClosed.addListener(function(windowId){
 });
 
 */
+
+chrome.windows.onFocusChanged.addListener(function(windowId) {
+    if (windowId === -1) {
+         // Assume minimized
+         if (tabActive) {
+				var d = new Date();
+				time[tabActive].total_time = parseInt(time[tabActive].total_time) + parseInt(d.getTime()) - parseInt(time[tabActive].start_time);
+				time[tabActive].start_time = d.getTime();
+
+			}
+			
+			localStorage.setItem('time',JSON.stringify(time));
+			var retrievedObject =  localStorage.getItem('time');
+			console.log('retrievedObject:', JSON.parse(retrievedObject));
+    } else {
+        chrome.windows.get(windowId, function(chromeWindow) {
+            if (chromeWindow.state === "minimized") {
+                // Window is minimized
+                if (tabActive) {
+				var d = new Date();
+				time[tabActive].total_time = parseInt(time[tabActive].total_time) + parseInt(d.getTime()) - parseInt(time[tabActive].start_time);
+				time[tabActive].start_time = d.getTime();
+
+				}
+			
+				localStorage.setItem('time',JSON.stringify(time));
+				var retrievedObject =  localStorage.getItem('time');
+				console.log('retrievedObject:', JSON.parse(retrievedObject));
+            } else {
+                // Window is not minimized (maximized, fullscreen or normal)
+                chrome.tabs.query({currentWindow: true, active: true}, function(tab){
+      			if(tabActive){
+      			time[tabActive].total_time = parseInt(time[tabActive].total_time); 
+		//		time[tabActive].start_time = d.getTime();
+
+      			}
+        		var d = new Date();
+  				var start_time = d.getTime();
+        		url = tab[0].url;
+
+        		if(url.indexOf("/",9)!= -1){
+    			url = url.substring(0,url.indexOf("/",9))
+    			}
+ 
+	    		tabActive = url;
+
+	    		if(time.hasOwnProperty(url)){
+	    		time[url].start_time = start_time;
+	    		}else{
+    				time[url] = {
+    				"start_time"  : start_time,
+    				"total_time": 0
+    				}
+	    		}
+	    		console.log(time);
+
+				localStorage.setItem('time', JSON.stringify(time));
+				var retrievedObject = localStorage.getItem('time');
+				console.log('retrievedObject: ', JSON.parse(retrievedObject));
+	
+
+    			});
+            }
+        });
+    }
+});
