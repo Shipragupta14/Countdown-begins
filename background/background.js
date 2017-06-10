@@ -21,7 +21,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse){
 			startTime(getDomain(tab[0].url));
 			sendResponse({farewell: "welcome"});
 		});
-    }
+    }else if (request.greeting == "onclick") {
+		localStorage.removeItem(time);
+		localStorage.setItem("time", JSON.stringify({}));
+		time = JSON.parse(localStorage.getItem("time"));
+		startTime(tabActive);
+	    sendResponse({farewell: "Cleared!!"});
+	}
 });
 
 chrome.tabs.onActivated.addListener(function(info) {	
