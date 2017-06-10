@@ -2,20 +2,21 @@
 			td{
 				font-family: cursive;
 				padding: 0;
+				color: #808080;
 
 			}
 			   
 			
 			body{
-				background-color: rgba(55, 134, 130, 0.7);
-    			color: #491313;
-    			font-size: 1em;
+			
+    			font-size: 1.3em;
     			padding: 20px;
+    			
 			}
 
 			h3 {
 				font-family: Cambria;
-				font-size: 1.2em
+				font-size: 1.2em;
 			}
 			table{
 				margin : 0 auto;
