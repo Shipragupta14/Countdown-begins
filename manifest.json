@@ -1,5 +1,5 @@
 {
-	"name" : "Countdown begins",
+	"name" : "Time Speaks",
 	"version": "0.0.1",
     "manifest_version": 2,
     "description":"Shows the runtime of the active tab",
@@ -8,11 +8,8 @@
         "history",
         "storage"
     ],
+    "web_accessible_resources": ["pages/more.html"],
 
-    "web_accessible_resources" : [
-        "*.html",
-        "*.js"
-    ],
     "background": {
     "scripts": ["background/background.js"]
     },
