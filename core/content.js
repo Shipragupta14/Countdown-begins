@@ -1,5 +1,3 @@
-console.log("hello");
-
 window.onblur =function(){
 	chrome.runtime.sendMessage({greeting: "onblur"}, function(response) {
 	    console.log(response.farewell);

@@ -2,7 +2,6 @@ var time;
 var tabActive;
 
 // Initializing local storage
-
 if (localStorage["time"]) {
 	 time = JSON.parse(localStorage.getItem("time"));
 }else{
@@ -11,7 +10,6 @@ if (localStorage["time"]) {
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse){
-
     if (request.greeting == "onblur"){
     	updateTime();
         sendResponse({farewell: "goodbye"}); 
@@ -80,7 +78,6 @@ function startTime(url){
 		"total_time": 0
 		}
 	}
-
 	tabActive = url;
 	localStorage.setItem('time', JSON.stringify(time));
 }
