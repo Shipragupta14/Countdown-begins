@@ -5,18 +5,34 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"> 
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 
+	<style>
+		.tab,#clear {
+		    background-color: hsla(201, 40%, 42%, 0.5); 
+		    border: none;
+		    color: white;
+		    padding: 10px 25px;
+		    text-align: center;
+		    text-decoration: none;
+		    display: inline-block;
+		    font-size: 12px;
+		    margin: 4px 2px;
+		    cursor: pointer;
+		 	border-radius: 8px;
+    		box-shadow: 0 5px 10px 0 rgba(0,0,0,0.2), 0 6px 10px 0 rgba(0,0,0,0.19);
+		}
+	</style>
   	</head>    
 	<body style="width:400px;" align="center">
 
 		<div id="div1">
 
-		<h2><img src="../images/icon48.png"> Time Speaks! </h2>
+		<h2> <img src="../images/icon48.png"> <i>Time Speaks! </i></h2>
 	
 
 		<table id = "table">
 			<thead>
 			<tr>	
-			<th></th>
+					
 				<th> URL</th>
 				<th>TIME</th>
 
@@ -27,8 +43,8 @@
 			</tbody>
 		</table>
 	</div>
-	<input id="clear" type="button" value="CLEAR" style="float : right" >
-		 <button class="tab" data-tab="more"> More</button> 
+		 <button class="tab" data-tab="more" style="margin-left: 20px"> MORE</button> 
+		 <input id="clear" type="button" value="CLEAR" style="margin-left: 25px ">
 
  		<script src="js/material.min.js"></script>
 		<script src="js/jquery.min.js"></script>

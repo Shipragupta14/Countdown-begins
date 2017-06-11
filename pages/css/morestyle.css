@@ -1,25 +1,49 @@
 
 			td{
 				font-family: cursive;
-				padding: 0;
-				color: #808080;
+				//padding: 10px;
+				color: #F2F3f4;
 
 			}
-			   
-			
 			body{
 			
     			font-size: 1.3em;
     			padding: 20px;
-    			
 			}
-
 			h3 {
 				font-family: Cambria;
-				font-size: 1.2em;
+				font-size: 1.5em;
+
 			}
 			table{
 				margin : 0 auto;
 				
 			}
+			tr td{
+				padding: 5px
+			}
+			th{
+				//border-top: 3px solid lightgreen;
+				border-bottom: 3px solid lightgreen;
+				margin: 10px;
+    
+			}
+			h2 {
+			  animation-duration: 2s;
+			  animation-name: slidein;
+			}
+
+			@keyframes slidein {
+			  from {
+			    margin-left: 100%;
+			    width: 300%; 
+			  }
+
+			  to {
+			    margin-left: 0%;
+			    width: 100%;
+			  }
+			}
+
+	
 	

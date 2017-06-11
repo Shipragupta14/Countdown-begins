@@ -1,24 +1,29 @@
 
 			td{
-				font-family: cursive;
+				font-family: comic sans ms;
 				padding: 0;
 
 			}
-			   
-			
 			body{
-				background-color: rgba(55, 134, 130, 0.7);
+				background-color: #edfcff;
     			color: #491313;
     			font-size: 1em;
     			padding: 20px;
 			}
-
-			h3 {
+			h2 {
 				font-family: Cambria;
-				font-size: 1.2em
+				font-size: 2.2em;
+				color: rgba(20,20,20,0.7);
 			}
 			table{
 				margin : 0 auto;
 				
 			}
-	
+			th{
+				//border-top: 3px solid chocolate;
+				border-bottom: 3px solid chocolate;
+    			//background-color: #F5F5DC;
+			}
+			tbody td {
+				padding : 5px;
+			}

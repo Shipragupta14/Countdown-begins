@@ -1,36 +1,79 @@
-
 var bg = chrome.extension.getBackgroundPage(); 
 var time = bg.time;
 
-
+var chart;
 var arr = [];
+var urlData =[];
+var durationData = [];
 for(url in time){
 	arr.push({
 		"url" : url,
 		"total_time": parseInt(time[url].total_time)
 	});
 } 
-
 arr.sort(function(a, b){
     return b.total_time - a.total_time;
 });
-console.log(arr);
-for (var i=0;i<arr.length;i++){
-	
-	//console.log(arr[i].url);
-	//var hrs = parseInt(arr[i].total_time/3600000)
-	//var min = parseInt((arr[i].total_time)/60000);
-	var sec = parseInt((arr[i].total_time)/1000);
-	// hrs = hrs == 0 ? "" : hrs + "h ";
-	// min = min == 0 ? "" : min + "m ";
-	// sec = sec == 0 ? "0s" : sec + "s";
-	$("table tbody").append("<tr><td>"+arr[i].url+"</td><td> "+ sec +"</td></tr>");
-	
+arr.forEach( function(obj, index){
+	//Passing these arrays in the highchart so that axes will not depend on time format
+	urlData.push(obj.url);
+	durationData.push(obj.total_time/1000);  
+});
+
+//For pagination...
+var arrLength = arr.length;
+var size  = 10;
+var pages = Math.ceil(arrLength/size);
+document.querySelector('.pagination').innerHTML="";
+for(var i = 0; i< pages; i++){
+	//making the page buttons
+	var html = "<li><a  class='list' href='#' >"+parseInt(i+1)+"</a></li>";
+    document.querySelector('.pagination').innerHTML =  document.querySelector('.pagination').innerHTML + html;
+  }
+
+  for(var i= 0; i<pages; i++){
+       document.getElementsByClassName('list')[i].addEventListener('click', function(event){
+       	event.preventDefault();
+	  	getPage(event.toElement.innerHTML);
+	  });
+  }
+  function getPage(pageNo) {
+	var start = (pageNo-1)*size +1;
+    var end;
+    if(pageNo*size > arrLength){
+    	end = arrLength;
+    }else{
+    	end = pageNo*size;
+    }
+    newarr = arr.slice(start-1, end);
+    newUrl = urlData.slice(start-1, end);
+    newDuration = durationData.slice(start-1, end);
+    document.querySelector('table tbody').innerHTML = "";
+	for (var i=0;i<newarr.length;i++){
+		var hrs = parseInt(newarr[i].total_time/3600000)
+		var min = parseInt((newarr[i].total_time-(hrs*3600000))/60000);
+		var sec = parseInt((newarr[i].total_time-(hrs*3600000)-(min*60000))/1000);
+		hrs = hrs == 0 ? "" : hrs + "h ";
+		min = min == 0 ? "" : min + "m ";
+		sec = sec == 0 ? "0s" : sec + "s";
+		document.querySelector('table tbody').innerHTML = document.querySelector('table tbody').innerHTML+ "<tr><td>"+newarr[i].url+"</td><td> "+hrs +min +sec +"</td></tr>";
+		getChart(newUrl, newDuration);
+	}
 }
 
-m();
-function m(){
+	for (var i=0;i< (arr.length > size ? size : arr.length);i++){
+		var hrs = parseInt(arr[i].total_time/3600000);
+		var min = parseInt((arr[i].total_time-(hrs*3600000))/60000);
+		var sec = parseInt((arr[i].total_time-(hrs*3600000)-(min*60000))/1000);
+		hrs = hrs == 0 ? "" : hrs + "h ";
+		min = min == 0 ? "" : min + "m ";
+		sec = sec == 0 ? "0s" : sec + "s";
+		document.querySelector('table tbody').innerHTML = document.querySelector('table tbody').innerHTML+ "<tr><td>"+arr[i].url+"</td><td> "+hrs +min +sec +"</td></tr>";		
+	}
 
+getChart(urlData.slice(0,size), durationData.slice(0,size));
+
+function getChart(urlData, durationData){
 	Highcharts.theme = {
 	colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee',
 		'#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
@@ -44,9 +87,9 @@ function m(){
 		},
 		style: {
 			fontFamily: '\'Unica One\', sans-serif'
-		},
+			},
 		plotBorderColor: '#606063'
-	},
+		},
 	title: {
 		style: {
 			color: '#E0E0E3',
@@ -229,31 +272,43 @@ function m(){
 	contrastTextColor: '#F0F0F3',
 	maskColor: 'rgba(255,255,255,0.3)'
 };
-
 Highcharts.setOptions(Highcharts.theme);
 
-Highcharts.chart('container', {
-    data: {
-        table: 'table'
-    },
+chart = Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
     
     title: {
-        text: 'Data extracted from a HTML table in the page'
+        text: 'Runtime for the active tab'
+    },
+    xAxis:{
+    	categories: urlData
     },
     yAxis: {
-        allowDecimals: false,
+        min: 0,
         title: {
-            text: 'Seconds'
+            text: 'Time(seconds)'
         }
     },
     tooltip: {
-        formatter: function () {
-            return '<b>' + this.series.name + '</b><br/>' +
-                this.point.y + ' ' + this.point.name.toLowerCase();
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0"> {series.name}: </td>' +
+            '<td style="padding:0"><b> {point.y:.0f} sec</b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+    },
+    plotOptions: {
+        column: {
+            pointPadding: 0.2,
+            borderWidth: 0
         }
-    }
+    },
+    series: [{
+        name: 'Time',
+        data: durationData
+
+    }]
 });
 }
