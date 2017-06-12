@@ -2,9 +2,9 @@ var bg = chrome.extension.getBackgroundPage();
 var time = bg.time;
 
 var chart;
-var arr = [];
-var urlData =[];
-var durationData = [];
+var arr = [];           //Used for the table
+var urlData =[];		//Used for the highcharts
+var durationData = [];	//Used for the highcharts
 for(url in time){
 	arr.push({
 		"url" : url,
@@ -16,8 +16,8 @@ arr.sort(function(a, b){
 });
 arr.forEach( function(obj, index){
 	//Passing these arrays in the highchart so that axes will not depend on time format
-	urlData.push(obj.url);
-	durationData.push(obj.total_time/1000);  
+	urlData.push(obj.url);						//pushing the url
+	durationData.push(obj.total_time/1000);  	//pushing seconds after dividing by 1000
 });
 
 //For pagination...
@@ -31,12 +31,15 @@ for(var i = 0; i< pages; i++){
     document.querySelector('.pagination').innerHTML =  document.querySelector('.pagination').innerHTML + html;
   }
 
+//to check which page button is clicked by the user
   for(var i= 0; i<pages; i++){
        document.getElementsByClassName('list')[i].addEventListener('click', function(event){
        	event.preventDefault();
 	  	getPage(event.toElement.innerHTML);
 	  });
   }
+
+//According to the page no., we set the the range of array lies in that page 
   function getPage(pageNo) {
 	var start = (pageNo-1)*size +1;
     var end;
@@ -45,10 +48,12 @@ for(var i = 0; i< pages; i++){
     }else{
     	end = pageNo*size;
     }
+    //slice method returns the elements of an array as a new array object
     newarr = arr.slice(start-1, end);
     newUrl = urlData.slice(start-1, end);
     newDuration = durationData.slice(start-1, end);
     document.querySelector('table tbody').innerHTML = "";
+    //to display the time format during the pagination too
 	for (var i=0;i<newarr.length;i++){
 		var hrs = parseInt(newarr[i].total_time/3600000)
 		var min = parseInt((newarr[i].total_time-(hrs*3600000))/60000);
@@ -60,7 +65,7 @@ for(var i = 0; i< pages; i++){
 		getChart(newUrl, newDuration);
 	}
 }
-
+//to display the time format in table 
 	for (var i=0;i< (arr.length > size ? size : arr.length);i++){
 		var hrs = parseInt(arr[i].total_time/3600000);
 		var min = parseInt((arr[i].total_time-(hrs*3600000))/60000);
@@ -71,9 +76,12 @@ for(var i = 0; i< pages; i++){
 		document.querySelector('table tbody').innerHTML = document.querySelector('table tbody').innerHTML+ "<tr><td>"+arr[i].url+"</td><td> "+hrs +min +sec +"</td></tr>";		
 	}
 
+//to show the columns in graph for that sites only which lies in a page 
 getChart(urlData.slice(0,size), durationData.slice(0,size));
 
+//GRAPH
 function getChart(urlData, durationData){
+	//dark-unica theme for highchart 
 	Highcharts.theme = {
 	colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee',
 		'#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
@@ -274,6 +282,7 @@ function getChart(urlData, durationData){
 };
 Highcharts.setOptions(Highcharts.theme);
 
+//Giving values to the chart
 chart = Highcharts.chart('container', {
     chart: {
         type: 'column'
@@ -283,12 +292,12 @@ chart = Highcharts.chart('container', {
         text: 'Runtime for the active tab'
     },
     xAxis:{
-    	categories: urlData
+    	categories: urlData            //passing urlData array obj on the x-axis after slicing
     },
     yAxis: {
-        min: 0,
+        min: 0,                     //minimum value of y-axis is zero
         title: {
-            text: 'Time(seconds)'
+            text: 'Time(seconds)'	 //y-axis always fetch the data from the array mentioned in the series
         }
     },
     tooltip: {
@@ -307,7 +316,7 @@ chart = Highcharts.chart('container', {
     },
     series: [{
         name: 'Time',
-        data: durationData
+        data: durationData				//passing durationData array obj on y -axis
 
     }]
 });
