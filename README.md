@@ -2,6 +2,8 @@
 It is a Chrome Extension which keeps the track of how much time you have spend on each tab.
 
 ## How to Run
+  * Download the extension (in Mozilla) directly from the link - https://addons.mozilla.org/en-US/firefox/addon/time-speaks/ and can also rate and review :)
+  
   * You can try the extension by enabling developer mode from the chrome://extensions settings and loading the unpacked extension.
 For more detail check this link: https://developer.chrome.com/extensions/getstarted#unpacked
   
